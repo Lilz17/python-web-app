@@ -7,19 +7,24 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.5', '3.6', '3.7', '3.8']
+        # We'll stick to 3.8 and newer to avoid the "not found" errors for 3.5/3.6
+        python-version: ['3.8', '3.9', '3.10', '3.11']
     steps:
       - uses: actions/checkout@v4
+      
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          
       - name: Install dependencies
         run: |
           pip install uv
           uv pip install -r requirements.txt pytest flake8
+          
       - name: Lint with flake8
         run: flake8 src --count --select=E9,F63,F7,F82 --show-source --statistics
+          
       - name: Test with pytest
         env:
           PYTHONPATH: src
